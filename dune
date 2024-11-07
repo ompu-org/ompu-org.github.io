@@ -1,0 +1,14 @@
+(alias
+ (name default)
+ (deps
+  bin/main.bc.js)
+)
+
+(subdir scripts
+  (copy_files (alias dev) (files %{project_root}/bin/*.bc.js))
+  (copy_files (alias dev) (files %{project_root}/statics/scripts/*.js)))
+(subdir images
+  (copy_files (alias dev) (files %{project_root}/statics/images/*)))
+(subdir styles
+  (copy_files (alias dev) (files %{project_root}/statics/styles/*.css)))
+(copy_files (alias dev) (files statics/*.html))
