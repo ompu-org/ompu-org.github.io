@@ -1,0 +1,4 @@
+(library
+  (name ompu_lib)
+ (libraries js_of_ocaml)
+  )

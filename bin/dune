@@ -1,5 +1,5 @@
 (executable
  (name main)
  (modes js)
- (libraries )
+ (libraries ompu_lib)
  (preprocess (pps js_of_ocaml-ppx)))
