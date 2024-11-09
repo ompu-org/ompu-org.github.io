@@ -1,6 +1,6 @@
 (lang dune 3.0)
 
-(name jsoo-alhbed)
+(name ompu)
 
 (generate_opam_files true)
 
@@ -16,7 +16,7 @@
 (documentation https://url/to/documentation)
 
 (package
- (name jsoo-alhbed)
+ (name ompu)
  (synopsis "A short synopsis")
  (description "A longer description")
  (depends ocaml dune js_of_ocaml-ppx uutf)
