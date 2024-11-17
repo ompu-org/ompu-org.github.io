@@ -12,7 +12,8 @@ let get_textarea () =
   | None -> failwith "get_textarea"
 
 let draw text =
-  Abcjs.renderAbc "display" (text) |> ignore
+  let options = [("responsive", js"resize")] in
+  Abcjs.renderAbc "display" (text) options |> ignore
 
 let onkeyup _event =
   let text = (get_textarea())##.value in
@@ -42,7 +43,7 @@ let onload _event =
   in
   (get_textarea())##.value := js text;
   (* 現在のテキストエリアの楽譜をレンダリングする *)
-  draw text;
+  draw (js text);
 
   (* テキストエリアが書き換わったらリアルタイムでレンダリングし直す *)
   (get_textarea())##.onkeyup := Dom_html.handler onkeyup;
