@@ -15,11 +15,6 @@ let draw text =
   let options = [("responsive", js"resize")] in
   Abcjs.renderAbc "display" (text) options |> ignore
 
-let onkeyup _event =
-  let text = (get_textarea())##.value in
-  draw text;
-  Js._false
-
 let tw_btn text =
   let button_text = "この楽譜をツイートする" in
   let hashtag = "ompuOrg" in
@@ -32,6 +27,15 @@ let tw_btn text =
     "https://" ^ base ^ "?" ^ query
   in
   Tweet_button.post_button ~link ~hashtag body button_text
+
+let set_twbutton abctext =
+  (Dom_html.getElementById_exn "tweet")##.innerHTML := js (tw_btn abctext)
+
+let onkeyup _event =
+  let text = (get_textarea())##.value in
+  draw text;
+  set_twbutton (Js.to_string text);
+  Js._false
 
 let default_text = "(FAd6)| (=cAE6) | (FAdc edBc) | A4 E4|"
 
@@ -49,7 +53,7 @@ let onload _event =
   (get_textarea())##.onkeyup := Dom_html.handler onkeyup;
 
   (* Tweetボタンの設置 *)
-  (Dom_html.getElementById_exn "tweet")##.innerHTML := js (tw_btn text);
+  set_twbutton text;
   Js._false
 
 let () =
