@@ -13,7 +13,8 @@ let get_textarea () =
 
 let draw text =
   let options = [("responsive", js"resize")] in
-  Abcjs.renderAbc "display" (text) options |> ignore
+  Abcjs.renderAbc "display" (text) options |> ignore;
+  Abcjs.renderMidi "midi" text
 
 let tw_btn text =
   let button_text = "この楽譜をツイートする" in

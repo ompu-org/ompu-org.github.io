@@ -7,3 +7,7 @@ let renderAbc elem abc_string options =
     |> Unsafe.obj
   in
   Unsafe.meth_call (Unsafe.pure_js_expr "ABCJS") "renderAbc" [|Unsafe.inject elem; Unsafe.inject abc_string; Unsafe.inject options |]
+
+let renderMidi elem abc_string =
+  Unsafe.meth_call (Unsafe.pure_js_expr "ABCJS") "renderMidi"
+    [|Unsafe.inject elem; Unsafe.inject abc_string|]
