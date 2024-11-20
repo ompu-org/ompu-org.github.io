@@ -38,7 +38,7 @@ let onkeyup _event =
   set_twbutton (Js.to_string text);
   Js._false
 
-let default_text = "(FAd6)| (=cAE6) | (FAdc edBc) | A4 E4|"
+let default_text = "K:D\nQ:1/4=80\n(FAd6)| (=cAE6) | (FAdc edBc) | A4 E4|"
 
 let onload _event =
   let text =
