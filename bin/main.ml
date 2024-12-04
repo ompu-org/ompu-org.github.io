@@ -38,7 +38,11 @@ let onkeyup _event =
   set_twbutton (Js.to_string text);
   Js._false
 
-let default_text = "K:D\nQ:1/4=80\n(FAd6)| (=cAE6) | (FAdc edBc) | A4 E4|"
+let default_text = {|K:D
+Q:"Allegro" 1/4=152
+M:2/4
+L.a2(fa L.^g2)(^gf| L.a2)(a^g fdfg |L.a2)(fa L.^g2)(^gf|L.e2)(ed e4)|
+|}
 
 let onload _event =
   let text =
