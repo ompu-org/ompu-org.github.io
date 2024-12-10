@@ -86,7 +86,6 @@ let onload _event =
   (get_textarea())##.onkeyup := Dom_html.handler onkeyup;
 
   (* copy button *)
-  save_storage text;
   set_copybutton text;
 
   (* Tweetボタンの設置 *)
