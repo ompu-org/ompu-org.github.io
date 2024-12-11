@@ -131,23 +131,33 @@
 
 <div class="col-lg-8 mx-auto p-4 py-md-5">
   <header class="d-flex align-items-center pb-3 mb-5 border-bottom">
-    <a href="/" class="d-flex align-items-center text-body-emphasis text-decoration-none">
+    <a href="./" class="d-flex align-items-center text-body-emphasis text-decoration-none">
       <span class="fs-4">ompu.org</span>
       <i class="bi bi-music-note-beamed"></i>
     </a>
   </header>
 
+  <div id="test"></div>
+
   <main>
-    <div id="display"></div>
-    <textarea id="text" class="form-control" rows="5">abc</textarea>
-    <div id="midi"></div>
-    <div>
-      <a id="copy"><i class="bi bi-copy"></i></a>
-      <a id="tweet" target="_blank" class="twitter-share-button"><i class="bi bi-twitter-x"></i></a>
+
+    <div id="contents" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+        <div class="col">
+          <div class="card shadow-sm">
+            <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
+            <div class="card-body">
+              <p class="card-text">This is a wider card with supporting text. This content is a little bit longer.</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+                  <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+                </div>
+                <small class="text-body-secondary">9 mins</small>
+              </div>
+            </div>
+          </div>
+        </div>
     </div>
-<!--    <div id="tweet"></div> -->
-    <a target="_blank" href="https://x.com/search?q=ompuOrg&f=live">他の人の楽譜を見る</a>
-    <a target="_blank" href="list.html">他の人の楽譜を見る</a>
   </main>
 
   <footer class="pt-5 my-5 text-body-secondary border-top">
@@ -157,7 +167,7 @@
 <script src="scripts/bootstrap.bundle.min.js"></script>
 <script src="scripts/abcjs-basic-min.js"></script>
 <script src="scripts/abcjs_midi_5.11.0-min.js"></script>
-<script src="scripts/main.bc.js"></script>
+<script src="scripts/list.bc.js"></script>
 
     </body>
 </html>

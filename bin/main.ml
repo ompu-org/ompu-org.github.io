@@ -2,6 +2,7 @@ open Js_of_ocaml
 open Ompu_lib
 module Jsonp = Js_of_ocaml_lwt.Jsonp
 open Js
+module List = Stdlib.List
 
 let js = Js.string
 

@@ -1,7 +1,8 @@
 (alias
  (name default)
  (deps
-  bin/main.bc.js)
+  bin/main.bc.js
+  bin/list.bc.js)
 )
 
 (subdir scripts
