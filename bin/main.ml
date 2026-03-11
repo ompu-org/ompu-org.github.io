@@ -1,5 +1,6 @@
 open Js_of_ocaml
 open Ompu_lib
+open Common
 module Jsonp = Js_of_ocaml_lwt.Jsonp
 open Js
 module List = Stdlib.List
@@ -8,6 +9,7 @@ let js = Js.string
 
 let get_params () : (string * string) list = Url.Current.arguments
 let query params = List.assoc_opt "q" params
+let zquery params = List.assoc_opt "z" params
 
 
 let get_textarea () =  match Dom_html.getElementById_coerce "text" Dom_html.CoerceTo.textarea with
@@ -28,11 +30,12 @@ let draw text =
   Abcjs.renderMidi "midi" text
 
 let tw_url text =
+  let compressed = Lzstringjs.compress_to_base64 text in
   let hashtag = "ompuOrg" in
   let body = Printf.sprintf "譜面をみる → " in
   let link =
     let query =
-      Url.encode_arguments [("q", text)]
+      Url.encode_arguments [("z", compressed)]
     in
     let base = "www.ompu.org" in
     "https://" ^ base ^ "?" ^ query
@@ -42,20 +45,37 @@ let tw_url text =
 let fetch url = Jsonp.call url
 
 let save_storage abctext =
-  Firebug.console##log (Printf.sprintf "save storage : %s" abctext);
   let url = Printf.sprintf "https://script.google.com/macros/s/AKfycbwG34ku1-gMygQHpbfzyf9dBPiMWKNCEOBMXRrlc0ghjpKiW_-iovtr1neyqr19RgTbxw/exec?type=save&abc=%s&callback=f" abctext in
   fetch url
   |> ignore
 
 let navigator = Unsafe.pure_js_expr "navigator"
 
-let onclick_copy abctext _event =
-  ignore @@ (navigator##.clipboard##writeText abctext);
+let zquery_of_abc abctext =
+  let compressed = Lzstringjs.compress_to_base64 abctext in
+  Url.encode_arguments [("z", compressed)]
+
+let get_location_url () =
+  Dom_html.window##.location##.href
+  |> Js.to_string
+
+let set_address_bar zquery =
+  let path = "/?" ^ zquery in
+  Console.console##log (Printf.sprintf "set_address_bar '%s'" path);
+  let empty = object%js end in (* {} *)
+  Dom_html.window##.history##pushState empty (Js.string "") (Js.Opt.return (Js.string path))
+
+let onclick_copy _event =
+  let abctext = (get_textarea())##.value |> Js.to_string in
+  let zquery = zquery_of_abc abctext in
+  set_address_bar zquery;
+  let url = get_location_url () in
+  ignore @@ (navigator##.clipboard##writeText url);
   save_storage abctext;
   Js._false
 
-let set_copybutton abctext =
-  copy_button##.onclick := Dom_html.handler (onclick_copy abctext)
+let set_copybutton () =
+  copy_button##.onclick := Dom_html.handler (onclick_copy)
 
 let set_twbutton abctext =
   let link = tw_url abctext in
@@ -75,9 +95,11 @@ L.a2(fa L.^g2)(^gf| L.a2)(a^g fdfg |L.a2)(fa L.^g2)(^gf|L.e2)(ed e4)|
 
 let onload _event =
   let text =
-    match query (get_params ()) with
-    | None -> default_text
-    | Some q -> q
+    let ps = get_params () in
+    option_or
+      (zquery ps |> Option.map Lzstringjs.decompress_from_base64)
+      (query ps)
+    |> Option.value ~default:default_text
   in
   (get_textarea())##.value := js text;
   (* 現在のテキストエリアの楽譜をレンダリングする *)
@@ -87,7 +109,7 @@ let onload _event =
   (get_textarea())##.onkeyup := Dom_html.handler onkeyup;
 
   (* copy button *)
-  set_copybutton text;
+  set_copybutton ();
 
   (* Tweetボタンの設置 *)
   set_twbutton text;

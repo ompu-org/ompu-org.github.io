@@ -1,6 +1,9 @@
 open Js_of_ocaml
 open Js
 
+(**
+   renderAbc("class", abcString, options);
+ *)
 let renderAbc elem abc_string options =
   let options =
     List.map(fun (key,v) -> (key, Unsafe.inject v)) options |> Array.of_list

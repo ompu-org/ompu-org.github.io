@@ -77,8 +77,8 @@ let parse json =
            c##.abc >>= fun abc ->
 (*           c##.id >>= fun id ->*)
            let id = js (string_of_float datetime) in (*一旦時刻をidとする*)
-           Firebug.console##log datetime;
-           Firebug.console##log abc;
+           Console.console##log datetime;
+           Console.console##log abc;
            return {id; datetime; abc}
          )
     |> sequence
