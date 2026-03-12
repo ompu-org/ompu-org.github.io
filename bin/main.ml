@@ -45,7 +45,10 @@ let tw_url text =
 let fetch url = Jsonp.call url
 
 let save_storage abctext =
-  let url = Printf.sprintf "https://script.google.com/macros/s/AKfycbwG34ku1-gMygQHpbfzyf9dBPiMWKNCEOBMXRrlc0ghjpKiW_-iovtr1neyqr19RgTbxw/exec?type=save&abc=%s&callback=f" abctext in
+  let path = "https://script.google.com/macros/s/AKfycbzXwzQ-niX0v8SdnCb3o6yR7dM6yyYTnGdiFFBjzHydVv9kqrQ1-D937Dy1wBZ-uxtL2w/exec" in
+  let query = Url.encode_arguments [ ("type", "save"); ("abc", abctext); ("callback", "f") ] in
+  let url = !%"%s?%s" path query in
+  Console.console##log (!%"jsonp: %s" url);
   fetch url
   |> ignore
 

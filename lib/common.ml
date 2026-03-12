@@ -1,3 +1,4 @@
+let (!%) f = Printf.sprintf f
 
 let option_or x y =
   match x, y with
