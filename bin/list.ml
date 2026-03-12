@@ -41,6 +41,11 @@ let _testdiv =
 let content cont =
   let open Html_util in
   let id, abctext, _datetime = Js.to_string cont.id, cont.abc, cont.datetime in
+  let max_abc_length = 20 in
+  let abctext =
+    if abctext##.length > max_abc_length
+    then abctext##substring 0 max_abc_length else abctext
+  in
   let canvas = div ~id [] in
   div ~class_:"col" [
       div ~class_:"card shadow-sm" [
@@ -99,10 +104,23 @@ let find () =
          contents
   )
 
+let show_kurukuru() =
+  contents_div##.innerHTML := js{|
+<div class="d-flex justify-content-center">
+  <div class="spinner-border" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>|}
+
+let hide_kurukuru () =
+  contents_div##.innerHTML := js""
+
 let onload _event =
+  contents_div##.innerHTML := js"";
+  show_kurukuru();
   find ()
   |> Promise.then_ (fun contents ->
-         contents_div##.innerHTML := js"";
+         hide_kurukuru();
          List.iter (fun (cont) ->
              Dom.appendChild contents_div (content cont);
              showAbc cont.id cont.abc
