@@ -1,0 +1,9 @@
+# Cloudflare Pages configuration
+# https://developers.cloudflare.com/pages/functions/wrangler-configuration/
+#
+# Fork owners: change `name` to your own Cloudflare Pages project name,
+# and set CLOUDFLARE_PROJECT_NAME as a GitHub Actions repository variable
+# (Settings → Secrets and variables → Variables) to the same value.
+
+name = "ompu-org"
+pages_build_output_dir = "_build/default/"
