@@ -84,11 +84,189 @@ let set_twbutton abctext =
   let link = tw_url abctext in
   tw_button##.href := (js link)
 
-let onkeyup _event =
-  let text = (get_textarea())##.value in
+(* ===== ABC parsing for unit note length ===== *)
+
+let rec gcd a b = if b = 0 then a else gcd b (a mod b)
+
+let scan_int s i =
+  let n = String.length s in
+  let j = ref i in
+  while !j < n && s.[!j] >= '0' && s.[!j] <= '9' do incr j done;
+  if !j = i then None
+  else Some (int_of_string (String.sub s i (!j - i)), !j)
+
+let find_abc_field s field_char =
+  let n = String.length s in
+  let rec scan i =
+    if i + 2 > n then None
+    else if s.[i] = field_char && s.[i + 1] = ':' &&
+            (i = 0 || s.[i - 1] = '\n') then begin
+      let j = ref (i + 2) in
+      while !j < n && s.[!j] = ' ' do incr j done;
+      match scan_int s !j with
+      | None -> scan (i + 1)
+      | Some (num, k) ->
+        if k < n && s.[k] = '/' then
+          (match scan_int s (k + 1) with
+           | None -> Some (num, 1)
+           | Some (den, _) -> Some (num, den))
+        else Some (num, 1)
+    end
+    else scan (i + 1)
+  in
+  scan 0
+
+(* Read L: field, or infer from M: if absent *)
+let get_unit_note_length text =
+  match find_abc_field text 'L' with
+  | Some (num, den) -> (num, den)
+  | None ->
+    match find_abc_field text 'M' with
+    | Some (mnum, mden) ->
+      let ratio = float_of_int mnum /. float_of_int mden in
+      if ratio < 0.75 then (1, 16) else (1, 8)
+    | None -> (1, 8)
+
+let duration_suffix lnum lden tnum tden =
+  let p = tnum * lden in
+  let q = tden * lnum in
+  let g = gcd p q in
+  let p = p / g in
+  let q = q / g in
+  if q = 1 then (if p = 1 then "" else string_of_int p)
+  else if p = 1 && q land (q - 1) = 0 then
+    let rec slash q acc = if q <= 1 then acc else slash (q / 2) (acc ^ "/") in
+    slash q ""
+  else if p = 1 then "/" ^ string_of_int q
+  else string_of_int p ^ "/" ^ string_of_int q
+
+(* ===== Mobile Keyboard UI ===== *)
+
+(* State: cursor position, note duration, octave offset *)
+let last_cursor_pos = ref 0
+let current_dur_num = ref 1
+let current_dur_den = ref 4
+let current_octave  = ref 0
+
+let dur_btns       : Dom_html.buttonElement Js.t list  ref = ref []
+let white_key_btns : Dom_html.buttonElement Js.t array ref = ref [||]
+let black_key_btns : Dom_html.buttonElement Js.t array ref = ref [||]
+
+let build_note letter sharp suffix =
+  let prefix = if sharp then "^" else "" in
+  let base, extra =
+    if !current_octave >= 1 then
+      String.lowercase_ascii letter,
+      String.make (max 0 (!current_octave - 1)) '\''
+    else
+      String.uppercase_ascii letter,
+      String.make (max 0 (- !current_octave)) ','
+  in
+  prefix ^ base ^ extra ^ suffix
+
+let note_text abc_text letter sharp =
+  let (lnum, lden) = get_unit_note_length abc_text in
+  let suf = duration_suffix lnum lden !current_dur_num !current_dur_den in
+  build_note letter sharp suf
+
+let get_button id =
+  Dom_html.getElementById_coerce id Dom_html.CoerceTo.button
+  |> Option.get
+
+let update_key_labels () =
+  let text = Js.to_string (get_textarea ())##.value in
+  let whites = [| "C"; "D"; "E"; "F"; "G"; "A"; "B" |] in
+  let blacks = [| "C"; "D"; "F"; "G"; "A" |] in
+  Array.iteri (fun i btn ->
+    btn##.innerText := js (note_text text whites.(i) false)
+  ) !white_key_btns;
+  Array.iteri (fun i btn ->
+    btn##.innerText := js (note_text text blacks.(i) true)
+  ) !black_key_btns
+
+let redraw () =
+  let text = (get_textarea ())##.value in
   draw text;
   set_twbutton (Js.to_string text);
+  update_key_labels ()
+
+let onkeyup _event =
+  redraw ();
   Js._false
+
+let insert_note letter sharp =
+  let ta = get_textarea () in
+  let text = Js.to_string ta##.value in
+  let note = note_text text letter sharp in
+  let n = String.length text in
+  let pos = min !last_cursor_pos n in
+  ta##.value := js (String.sub text 0 pos ^ note ^ String.sub text pos (n - pos));
+  last_cursor_pos := pos + String.length note;
+  redraw ()
+
+let setup_dur_buttons () =
+  let durations = [("1", 1, 1); ("2", 1, 2); ("4", 1, 4); ("8", 1, 8); ("16", 1, 16)] in
+  List.iter (fun (den_str, tnum, tden) ->
+    let btn = get_button ("dur-" ^ den_str) in
+    btn##.onclick := Dom_html.handler (fun _ ->
+      List.iter (fun b ->
+        b##.className := js "btn btn-outline-secondary dur-btn"
+      ) !dur_btns;
+      btn##.className := js "btn btn-outline-secondary dur-btn active";
+      current_dur_num := tnum;
+      current_dur_den := tden;
+      update_key_labels ();
+      Js._false
+    );
+    dur_btns := !dur_btns @ [btn]
+  ) durations
+
+let setup_oct_buttons () =
+  let oct_down = get_button "oct-down" in
+  let oct_disp = get_button "oct-disp" in
+  let oct_up   = get_button "oct-up" in
+  oct_down##.onclick := Dom_html.handler (fun _ ->
+    if !current_octave > -2 then begin
+      decr current_octave;
+      oct_disp##.innerText := js (string_of_int !current_octave);
+      update_key_labels ()
+    end;
+    Js._false
+  );
+  oct_up##.onclick := Dom_html.handler (fun _ ->
+    if !current_octave < 2 then begin
+      incr current_octave;
+      oct_disp##.innerText := js (string_of_int !current_octave);
+      update_key_labels ()
+    end;
+    Js._false
+  )
+
+let setup_piano () =
+  let whites = [| "C"; "D"; "E"; "F"; "G"; "A"; "B" |] in
+  white_key_btns := Array.map (fun letter ->
+    let btn = get_button ("wk-" ^ letter) in
+    btn##.onclick := Dom_html.handler (fun _ ->
+      insert_note letter false; Js._false
+    );
+    btn
+  ) whites;
+  let blacks = [| "C"; "D"; "F"; "G"; "A" |] in
+  black_key_btns := Array.map (fun letter ->
+    let btn = get_button ("bk-" ^ letter) in
+    btn##.onclick := Dom_html.handler (fun _ ->
+      insert_note letter true; Js._false
+    );
+    btn
+  ) blacks
+
+let setup_keyboard () =
+  setup_dur_buttons ();
+  setup_oct_buttons ();
+  setup_piano ();
+  update_key_labels ()
+
+(* ============================= *)
 
 let default_text = {|K:D
 Q:"Allegro" 1/4=152
@@ -110,12 +288,21 @@ let onload _event =
 
   (* テキストエリアが書き換わったらリアルタイムでレンダリングし直す *)
   (get_textarea())##.onkeyup := Dom_html.handler onkeyup;
+  (get_textarea())##.onblur := Dom_html.handler (fun _ ->
+    last_cursor_pos := (get_textarea ())##.selectionStart;
+    Js._false
+  );
+  (get_textarea())##.onclick := Dom_html.handler (fun _ ->
+    last_cursor_pos := (get_textarea ())##.selectionStart;
+    Js._true
+  );
 
   (* copy button *)
   set_copybutton ();
 
   (* Tweetボタンの設置 *)
   set_twbutton text;
+  setup_keyboard ();
   Js._false
 
 let () =
