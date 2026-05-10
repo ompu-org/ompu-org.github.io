@@ -1,0 +1,5 @@
+{
+  "name": "OCaml",
+  "image": "ocaml/opam:ubuntu-24.04-ocaml-5.0",
+  "postCreateCommand": "opam install . --deps-only --with-test"
+}
