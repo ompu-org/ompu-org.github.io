@@ -24,6 +24,10 @@ let tw_button =
   Dom_html.getElementById_coerce "tweet" Dom_html.CoerceTo.a
   |> Option.get
 
+let print_button =
+  Dom_html.getElementById_coerce "print" Dom_html.CoerceTo.a
+  |> Option.get
+
 let toast_elem =
   Dom_html.getElementById_coerce "toast" Dom_html.CoerceTo.div
   |> Option.get
@@ -93,6 +97,13 @@ let onclick_copy _event =
 let set_copybutton () =
   copy_button##.onclick := Dom_html.handler (onclick_copy)
 
+let onclick_print _event =
+  Dom_html.window##print;
+  Js._false
+
+let set_printbutton () =
+  print_button##.onclick := Dom_html.handler (onclick_print)
+
 let set_twbutton abctext =
   let link = tw_url abctext in
   tw_button##.href := (js link)
@@ -126,6 +137,9 @@ let onload _event =
 
   (* copy button *)
   set_copybutton ();
+
+  (* print button *)
+  set_printbutton ();
 
   (* Tweetボタンの設置 *)
   set_twbutton text;

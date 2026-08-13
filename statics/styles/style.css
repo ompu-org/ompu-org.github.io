@@ -315,3 +315,35 @@ body {
 .ompu-btn-icon:hover {
     color: var(--ompu-blue);
 }
+
+@media print {
+    .ompu-header,
+    .ompu-footer,
+    .ompu-toast,
+    .ompu-pane-editor,
+    .ompu-midi,
+    .ompu-toolbar {
+        display: none;
+    }
+
+    .ompu-shell {
+        display: block;
+        max-width: none;
+        min-height: 0;
+    }
+
+    .ompu-card {
+        display: block;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .ompu-pane-preview {
+        padding: 0;
+    }
+
+    .ompu-display {
+        overflow: visible;
+    }
+}

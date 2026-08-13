@@ -1,4 +1,11 @@
+(* Capture the sibling Promise module before [open Js_of_ocaml], since some
+   js_of_ocaml versions ship their own Promise module that would otherwise
+   shadow it below and make this file's Promise.t incompatible with the
+   Ompu_lib.Promise.t expected by callers such as bin/list.ml. *)
+module Local_promise = Promise
+
 open Js_of_ocaml
+module Promise = Local_promise
 
 class type response = object
   method json : _ Promise.t Js.meth
