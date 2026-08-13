@@ -1,0 +1,317 @@
+.load-circle {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 10px solid rgba(255, 255, 255, 0.5);
+    border-top-color: rgba(255, 255, 255, 1);
+    animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+:root {
+    --ompu-blue: #1a73e8;
+    --ompu-blue-dark: #1765cc;
+    --ompu-border: #dadce0;
+    --ompu-text: #202124;
+    --ompu-text-secondary: #5f6368;
+    --ompu-surface: #ffffff;
+    --ompu-surface-hover: #f1f3f4;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    background-color: #fff;
+    color: var(--ompu-text);
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+}
+
+.bi {
+    vertical-align: -0.125em;
+}
+
+.ompu-shell {
+    max-width: min(1800px, 96vw);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.ompu-main {
+    display: flex;
+    flex-direction: column;
+}
+
+.ompu-header {
+    padding-block: 1rem;
+    border-bottom: 1px solid var(--ompu-border);
+}
+
+.ompu-logo {
+    font-size: 1.375rem;
+    font-weight: 500;
+    color: var(--ompu-text);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.ompu-logo .bi {
+    color: var(--ompu-blue);
+}
+
+.ompu-nav a {
+    color: var(--ompu-text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-inline-start: 1.5rem;
+}
+
+.ompu-nav a:hover {
+    color: var(--ompu-blue);
+    text-decoration: underline;
+}
+
+.ompu-card {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    border: 1px solid var(--ompu-border);
+    border-radius: 24px;
+    overflow: hidden;
+    background: var(--ompu-surface);
+    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.08);
+}
+
+.ompu-pane {
+    flex: 1 1 380px;
+    min-width: 280px;
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+}
+
+.ompu-pane-editor {
+    flex-grow: 1.4;
+}
+
+.ompu-pane + .ompu-pane {
+    border-top: 1px solid var(--ompu-border);
+}
+
+@media (min-width: 700px) {
+    .ompu-pane + .ompu-pane {
+        border-top: none;
+        border-inline-start: 1px solid var(--ompu-border);
+    }
+
+    .ompu-main {
+        flex: 1 1 auto;
+        min-height: 0;
+    }
+
+    .ompu-card {
+        flex: 1 1 auto;
+        min-height: 0;
+    }
+
+    .ompu-card {
+        align-items: stretch;
+    }
+
+    .ompu-editor-wrap {
+        flex: 1 1 auto;
+        min-height: 0;
+    }
+
+    .ompu-editor-wrap .ompu-textarea {
+        height: 100%;
+    }
+}
+
+.ompu-textarea {
+    width: 100%;
+    min-height: min(65vh, 640px);
+    resize: vertical;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    padding: 0;
+    font-size: 1.25rem;
+    line-height: 1.5;
+    color: var(--ompu-text);
+    background: transparent;
+}
+
+.ompu-textarea:focus {
+    border: none;
+    box-shadow: none;
+}
+
+.ompu-display {
+    flex: 1;
+    overflow-x: auto;
+}
+
+.ompu-display svg {
+    max-width: 100%;
+}
+
+.ompu-midi {
+    margin-top: 1rem;
+}
+
+.ompu-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--ompu-border);
+}
+
+.ompu-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: var(--ompu-text-secondary);
+    text-decoration: none;
+    font-size: 1.1rem;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.ompu-icon-btn:hover {
+    background-color: var(--ompu-surface-hover);
+    color: var(--ompu-blue);
+}
+
+.ompu-footer {
+    padding-block: 1.5rem;
+    color: var(--ompu-text-secondary);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--ompu-border);
+}
+
+.ompu-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 2rem;
+    transform: translate(-50%, 12px);
+    background: var(--ompu-text);
+    color: #fff;
+    padding: 0.65rem 1.25rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 2000;
+}
+
+.ompu-toast--visible {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+.ompu-page-title {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+}
+
+.ompu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.25rem;
+}
+
+.ompu-score-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--ompu-border);
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--ompu-surface);
+    transition: box-shadow 0.15s ease;
+}
+
+.ompu-score-card:hover {
+    box-shadow: 0 1px 8px rgba(60, 64, 67, 0.15);
+}
+
+.ompu-score-thumb {
+    padding: 1rem;
+    min-height: 100px;
+    border-bottom: 1px solid var(--ompu-border);
+    overflow: hidden;
+}
+
+.ompu-score-thumb svg {
+    max-width: 100%;
+}
+
+.ompu-score-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+}
+
+.ompu-score-text {
+    margin: 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.85rem;
+    color: var(--ompu-text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ompu-score-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ompu-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.4rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid var(--ompu-border);
+    color: var(--ompu-blue);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: background-color 0.15s ease;
+}
+
+.ompu-btn:hover {
+    background-color: var(--ompu-surface-hover);
+}
+
+.ompu-btn-icon {
+    background: none;
+    border: none;
+    color: var(--ompu-text-secondary);
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.ompu-btn-icon:hover {
+    color: var(--ompu-blue);
+}

@@ -32,3 +32,10 @@ let button ?id ?class_ ?attrs text =
   set_id_class elem id class_ attrs;
   elem##.innerText := text;
   elem
+
+let a ?id ?class_ ?attrs ~href text =
+  let elem = Dom_html.createA document in
+  set_id_class elem id class_ attrs;
+  elem##.href := js href;
+  elem##.innerText := text;
+  elem

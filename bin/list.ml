@@ -15,10 +15,6 @@ let contents_div =
   Dom_html.getElementById_coerce "contents" Dom_html.CoerceTo.div
   |> Option.get
 
-let _testdiv =
-  Dom_html.getElementById_coerce "test" Dom_html.CoerceTo.div
-  |> Option.get
-
 (* こういうやつをつくる
         <div class="col">
           <div class="card shadow-sm">
@@ -38,26 +34,27 @@ let _testdiv =
           </div>
         </div>
 *)
+let view_href_of_abc abctext =
+  let compressed = Lzstringjs.compress_to_base64 abctext in
+  let query = Url.encode_arguments [("z", compressed)] in
+  "./?" ^ query
+
 let content cont =
   let open Html_util in
   let id, abctext, _datetime = Js.to_string cont.id, cont.abc, cont.datetime in
   let max_abc_length = 20 in
-  let abctext =
+  let preview =
     if abctext##.length > max_abc_length
     then abctext##substring 0 max_abc_length else abctext
   in
   let canvas = div ~id [] in
-  div ~class_:"col" [
-      div ~class_:"card shadow-sm" [
-          div ~class_:"card-img-top" ~attrs:[] [ canvas ];
-          div ~class_:"card-body" [
-              p ~class_:"card-text" (abctext);
-              div ~class_:"d-flex justify-content-between align-items-center" [
-                  div ~class_:"btn-group" [
-                      button ~class_:"btn btn-sm btn-outline-secondary" (js "View");
-                      button ~class_:"btn btn-sm btn-outline-secondary" (js "♡");
-                    ]
-                ]
+  div ~class_:"ompu-score-card" [
+      div ~class_:"ompu-score-thumb" [ canvas ];
+      div ~class_:"ompu-score-body" [
+          p ~class_:"ompu-score-text" preview;
+          div ~class_:"ompu-score-actions" [
+              (a ~class_:"ompu-btn" ~href:(view_href_of_abc abctext) (js "View") :> Dom_html.element t);
+              (button ~class_:"ompu-btn-icon" (js "♡") :> Dom_html.element t);
             ]
         ]
     ]

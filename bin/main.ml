@@ -24,6 +24,18 @@ let tw_button =
   Dom_html.getElementById_coerce "tweet" Dom_html.CoerceTo.a
   |> Option.get
 
+let toast_elem =
+  Dom_html.getElementById_coerce "toast" Dom_html.CoerceTo.div
+  |> Option.get
+
+let show_toast message =
+  toast_elem##.innerText := js message;
+  toast_elem##.className := js "ompu-toast ompu-toast--visible";
+  Dom_html.setTimeout (fun () ->
+      toast_elem##.className := js "ompu-toast"
+    ) 1800.
+  |> ignore
+
 let draw text =
   let options = [("responsive", js"resize")] in
   Abcjs.renderAbc "display" (text) options |> ignore;
@@ -73,7 +85,8 @@ let onclick_copy _event =
   let zquery = zquery_of_abc abctext in
   set_address_bar zquery;
   let url = get_location_url () in
-  ignore @@ (navigator##.clipboard##writeText url);
+  ignore @@ navigator##.clipboard##writeText url;
+  show_toast "Copied the link";
   save_storage abctext;
   Js._false
 
