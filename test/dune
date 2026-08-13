@@ -1,0 +1,14 @@
+(executable
+ (name test_lzstringjs)
+ (modes js)
+ (libraries ompu_lib alcotest)
+ (preprocess (pps js_of_ocaml-ppx)))
+
+(rule
+ (alias runtest)
+ (deps
+  test_lzstringjs.bc.js
+  preload_lzstring.js
+  ../statics/scripts/lz-string.js)
+ (action
+  (run node -r ./preload_lzstring.js ./test_lzstringjs.bc.js)))

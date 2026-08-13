@@ -46,7 +46,7 @@ let draw text =
   Abcjs.renderMidi "midi" text
 
 let tw_url text =
-  let compressed = Lzstringjs.compress_to_base64 text in
+  let compressed = Lzstringjs.compress_to_base64 (js text) |> Js.to_string in
   let hashtag = "ompuOrg" in
   let body = Printf.sprintf "譜面をみる → " in
   let link =
@@ -71,7 +71,7 @@ let save_storage abctext =
 let navigator = Unsafe.pure_js_expr "navigator"
 
 let zquery_of_abc abctext =
-  let compressed = Lzstringjs.compress_to_base64 abctext in
+  let compressed = Lzstringjs.compress_to_base64 (js abctext) |> Js.to_string in
   Url.encode_arguments [("z", compressed)]
 
 let get_location_url () =
@@ -124,7 +124,7 @@ let onload _event =
   let text =
     let ps = get_params () in
     option_or
-      (zquery ps |> Option.map Lzstringjs.decompress_from_base64)
+      (zquery ps |> Option.map (fun z -> Lzstringjs.decompress_from_base64 (js z) |> Js.to_string))
       (query ps)
     |> Option.value ~default:default_text
   in

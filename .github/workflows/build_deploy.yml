@@ -27,6 +27,8 @@ jobs:
 
       - run: opam exec -- dune build @dev
 
+      - run: opam exec -- dune runtest
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

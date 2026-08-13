@@ -35,7 +35,7 @@ let contents_div =
         </div>
 *)
 let view_href_of_abc abctext =
-  let compressed = Lzstringjs.compress_to_base64 abctext in
+  let compressed = Lzstringjs.compress_to_base64 abctext |> Js.to_string in
   let query = Url.encode_arguments [("z", compressed)] in
   "./?" ^ query
 

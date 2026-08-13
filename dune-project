@@ -19,7 +19,7 @@
  (name ompu)
  (synopsis "A short synopsis")
  (description "A longer description")
- (depends ocaml dune js_of_ocaml-ppx uutf)
+ (depends ocaml dune js_of_ocaml-ppx js_of_ocaml-lwt uutf (alcotest :with-test))
  (tags
   (topics "to describe" your project)))
 

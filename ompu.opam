@@ -15,6 +15,7 @@ depends: [
   "js_of_ocaml-ppx"
   "js_of_ocaml-lwt"
   "uutf"
+  "alcotest" {with-test}
   "odoc" {with-doc}
 ]
 build: [
